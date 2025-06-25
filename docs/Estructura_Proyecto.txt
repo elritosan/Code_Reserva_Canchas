@@ -1,0 +1,41 @@
+📂 Code_Reserva_Canchas
+├── 📁 backend
+│   ├── 📁 config
+│   │   └── 📄 db.js
+│   ├── 📁 controllers
+│   │   ├── 📁 Basicos
+│   │   │   └── 📄 Class_{nombretabla}_Controller.js
+│   │   └── 📁 Complejos
+│   ├── 📁 models
+│   │   ├── 📁 Basicos
+│   │   │   └── 📄 Class_{nombretabla}.js
+│   │   └── 📁 Complejos
+│   ├── 📁 routes
+│   │   ├── 📁 Basicos
+│   │   │   └── 📄 {nombretabla}_Routes.js
+│   │   ├── 📁 Complejos
+│   │   └── 📄 apiRoutes.js
+│   ├── 📄 .env
+│   ├── 📄 package-lock.json
+│   ├── 📄 package.json
+│   └── 📄 index.js
+├── 📁 frontend
+│   ├── 📁 public
+│   │   └── 📄 index.html
+│   ├── 📁 src
+│   │   ├── 📁 components
+│   │   ├── 📁 services
+│   │   │   ├── 📁 Basicos
+│   │   │   │   └── 📄 {nombretabla}Service.js
+│   │   │   ├── 📁 Complejos
+│   │   ├── 📁 views
+│   │   │   ├── 📁 auth
+│   │   ├── 📄 App.js
+│   │   ├── 📄 index.js
+│   │   ├── 📄 index.css
+│   │   └── 📄 reportWebVitals.js
+│   ├── 📄 package-lock.json
+│   ├── 📄 package.json
+│── 📄 .gitignore
+│── 📄 package-lock.json
+└── 📄 package.json
