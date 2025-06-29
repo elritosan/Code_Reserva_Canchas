@@ -27,13 +27,9 @@ Dentro de la carpeta Backend, crea un archivo llamado ".env" y coloca lo siguien
     Dentro de la carpeta frontend:
 
         npm install react-router-dom@latest
-
         npm install axios
-
         npm install bootstrap bootstrap-icons
-
         npm install react-bootstrap
-
         npm install react-icons
 
 📦 1. Estructura de carpetas esperada
@@ -67,6 +63,7 @@ Edita tu package.json del Backend y en la sección "scripts" agrega:
         "dev": "nodemon index.js",
         "start": "node index.js"
     }
+    
 Nota: Como pre-requisito ya debe estar creado el index.js en el Backend
 
 Edita tu package.json en la raíz (ProyectoBar-Cafeteria/package.json) y en la sección "scripts" agrega:
