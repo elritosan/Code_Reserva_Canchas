@@ -4,5 +4,6 @@ const router = express.Router();
 
 // Rutas básicas
 router.use("/roles", require("./Basicos/rol_Routes"));
+router.use("/usuarios", require("./Basicos/usuario_Routes"));
 
 module.exports = router;
