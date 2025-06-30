@@ -6,5 +6,6 @@ const router = express.Router();
 router.use("/roles", require("./Basicos/rol_Routes"));
 router.use("/usuarios", require("./Basicos/usuario_Routes"));
 router.use("/deportes", require("./Basicos/deporte_Routes"));
+router.use("/canchas", require("./Basicos/cancha_Routes"));
 
 module.exports = router;
