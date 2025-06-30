@@ -9,5 +9,6 @@ router.use("/deportes", require("./Basicos/deporte_Routes"));
 router.use("/canchas", require("./Basicos/cancha_Routes"));
 router.use("/horarios", require("./Basicos/horario_disponible_Routes"));
 router.use("/reservas", require("./Basicos/reserva_Routes"));
+router.use("/pagos", require("./Basicos/pago_Routes"));
 
 module.exports = router;
