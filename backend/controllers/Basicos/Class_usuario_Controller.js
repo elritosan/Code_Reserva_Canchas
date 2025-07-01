@@ -83,6 +83,34 @@ exports.obtenerUsuarioPorEmail = async (req, res) => {
   }
 };
 
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: "Email y contraseña son requeridos"
+      });
+    }
+
+    const usuario = await ClassUsuario.login(email, password);
+
+    res.json({
+      success: true,
+      data: usuario,
+      mensaje: "Inicio de sesión exitoso"
+    });
+
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      error: "Error en autenticación",
+      detalles: error.message
+    });
+  }
+};
+
 exports.actualizarUsuario = async (req, res) => {
   try {
     const usuarioActualizado = await ClassUsuario.actualizar(

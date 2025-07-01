@@ -31,6 +31,27 @@ export const usuarioService = {
     }
   },
 
+  login: async (email, password) => {
+    try {
+      const response = await axios.post(`${API_URL}/login`, { 
+        email, 
+        password 
+      });
+      
+      if (response.data.success) {
+        // Guardar token o datos de sesión
+        localStorage.setItem('authToken', response.data.token); // Si usas JWT
+        localStorage.setItem('userData', JSON.stringify(response.data.data));
+        return response.data.data;
+      }
+      throw new Error(response.data.error);
+
+    } catch (error) {
+      console.error('Error en login:', error);
+      throw new Error(error.response?.data?.detalles || "Error al iniciar sesión");
+    }
+  },
+
   crear: async ({ nombre, email, password, telefono, id_rol }) => {
     try {
       const res = await axios.post(API_URL, { nombre, email, password, telefono, id_rol });

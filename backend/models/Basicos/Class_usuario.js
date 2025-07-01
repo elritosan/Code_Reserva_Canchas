@@ -90,6 +90,35 @@ class ClassUsuario {
     }
   }
 
+  static async login(email, password) {
+    try {
+      // 1. Buscar usuario por email
+      const result = await db.query(
+        "SELECT * FROM usuarios WHERE email = $1",
+        [email.toLowerCase().trim()]
+      );
+      
+      if (result.rows.length === 0) {
+        throw new Error('Usuario no registrado');
+      }
+
+      const usuario = result.rows[0];
+
+      // 2. Verificar contraseña
+      const match = await bcrypt.compare(password, usuario.password_hash);
+      if (!match) {
+        throw new Error('Contraseña incorrecta');
+      }
+
+      // 3. Retornar datos seguros (sin password_hash)
+      const { password_hash, ...usuarioSeguro } = usuario;
+      return usuarioSeguro;
+
+    } catch (error) {
+      throw new Error(`Error en login: ${error.message}`);
+    }
+  }
+
   static async actualizar(id_usuario, { nombre, email, telefono, id_rol, verificado }) {
     try {
       const fields = [];
