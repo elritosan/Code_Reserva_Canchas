@@ -57,6 +57,32 @@ exports.obtenerUsuario = async (req, res) => {
   }
 };
 
+exports.obtenerUsuarioPorEmail = async (req, res) => {
+  try {
+    const usuario = await ClassUsuario.obtenerPorEmail(req.params.email);
+    if (!usuario) {
+      return res.status(404).json({
+        success: false,
+        error: "Usuario no encontrado"
+      });
+    }
+    
+    // No retornar el password_hash por seguridad
+    delete usuario.password_hash;
+    
+    res.json({ 
+      success: true, 
+      data: usuario 
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener usuario",
+      detalles: error.message
+    });
+  }
+};
+
 exports.actualizarUsuario = async (req, res) => {
   try {
     const usuarioActualizado = await ClassUsuario.actualizar(

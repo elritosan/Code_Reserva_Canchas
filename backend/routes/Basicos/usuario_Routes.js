@@ -4,6 +4,7 @@ const {
   crearUsuario,
   obtenerUsuarios,
   obtenerUsuario,
+  obtenerUsuarioPorEmail,
   actualizarUsuario,
   actualizarPassword,
   eliminarUsuario,
@@ -14,6 +15,7 @@ const router = express.Router();
 router.post("/", crearUsuario);
 router.get("/", obtenerUsuarios);
 router.get("/:id_usuario", obtenerUsuario);
+router.get("/email/:email", obtenerUsuarioPorEmail);
 router.put("/:id_usuario", actualizarUsuario);
 router.put("/:id_usuario/password", actualizarPassword);
 router.delete("/:id_usuario", eliminarUsuario);

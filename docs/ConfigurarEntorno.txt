@@ -5,6 +5,7 @@
     npm init -y
     npm install express cors
     npm install pg dotenv
+    npm install bcryptjs
 
 📌 Crear archivo .env
 Dentro de la carpeta Backend, crea un archivo llamado ".env" y coloca lo siguiente (ajustado a tu configuración local):

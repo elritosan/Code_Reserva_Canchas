@@ -22,6 +22,15 @@ export const usuarioService = {
     }
   },
 
+  obtenerPorEmail: async (email) => {
+    try {
+      const res = await axios.get(`${API_URL}/email/${encodeURIComponent(email)}`);
+      return res.data.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || "Error al obtener usuario por email");
+    }
+  },
+
   crear: async ({ nombre, email, password, telefono, id_rol }) => {
     try {
       const res = await axios.post(API_URL, { nombre, email, password, telefono, id_rol });
