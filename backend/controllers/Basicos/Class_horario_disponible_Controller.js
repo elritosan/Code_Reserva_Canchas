@@ -26,6 +26,23 @@ exports.crearHorario = async (req, res) => {
   }
 };
 
+exports.obtenerTodosHorarios = async (req, res) => {
+  try {
+    const horarios = await ClassHorarioDisponible.obtenerTodos();
+    res.json({
+      success: true,
+      count: horarios.length,
+      data: horarios
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener horarios",
+      detalles: error.message
+    });
+  }
+};
+
 exports.obtenerHorariosPorCancha = async (req, res) => {
   try {
     const horarios = await ClassHorarioDisponible.obtenerPorCancha(req.params.id_cancha);

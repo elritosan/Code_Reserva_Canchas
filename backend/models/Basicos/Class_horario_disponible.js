@@ -61,6 +61,20 @@ class ClassHorarioDisponible {
     }
   }
 
+  static async obtenerTodos() {
+    try {
+      const result = await db.query(
+        `SELECT h.*, c.nombre as nombre_cancha 
+        FROM horarios_disponibles h
+        JOIN canchas c ON h.id_cancha = c.id_cancha
+        ORDER BY h.dia_semana, h.hora_inicio`
+      );
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error al obtener todos los horarios: ${error.message}`);
+    }
+  }
+
   static async obtenerPorCancha(id_cancha) {
     try {
       const result = await db.query(

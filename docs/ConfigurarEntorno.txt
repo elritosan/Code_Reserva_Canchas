@@ -32,6 +32,11 @@ Dentro de la carpeta Backend, crea un archivo llamado ".env" y coloca lo siguien
         npm install bootstrap bootstrap-icons
         npm install react-bootstrap
         npm install react-icons
+        npm install bootstrap @popperjs/core
+        npm install @fortawesome/fontawesome-free
+        npm install react-bootstrap-icons
+
+Nota: Las Dependencias de bootstrap hay que importalas en el 'index.js' del frontend
 
 📦 1. Estructura de carpetas esperada
 
