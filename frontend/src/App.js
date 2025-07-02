@@ -5,7 +5,7 @@ import Navbar from './components/common/Navbar';
 import AdminLayout from "./views/admin/AdminLayout";
 import AdminDashboard from "./views/admin/AdminDashboard";
 import GestionarCanchas from "./views/admin/GestionarCanchas";
-// import GestionarReservas from "./views/admin/GestionarReservas";
+import GestionarReservas from "./views/admin/GestionarReservas";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="gestion-canchas" element={<GestionarCanchas />} />
-          {/* <Route path="gestion-reservas" element={<GestionarReservas />} /> */}
+          <Route path="gestion-reservas" element={<GestionarReservas />} />
         </Route>
         
         {/* Ruta para páginas no encontradas (redirige a /admin) */}

@@ -58,6 +58,26 @@ class ClassReserva {
     }
   }
 
+  static async obtenerTodos() {
+    try {
+      const result = await db.query(
+        `SELECT r.*, 
+        u.nombre as nombre_usuario,
+        h.dia_semana, h.hora_inicio, h.hora_fin,
+        c.nombre as nombre_cancha, d.nombre as nombre_deporte
+        FROM reservas r
+        JOIN usuarios u ON r.id_usuario = u.id_usuario
+        JOIN horarios_disponibles h ON r.id_horario = h.id_horario
+        JOIN canchas c ON h.id_cancha = c.id_cancha
+        JOIN deportes d ON c.id_deporte = d.id_deporte
+        ORDER BY r.fecha_reserva DESC, h.hora_inicio`
+      );
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error al obtener todas las reservas: ${error.message}`);
+    }
+  }
+
   static async obtenerPorUsuario(id_usuario) {
     try {
       const result = await db.query(

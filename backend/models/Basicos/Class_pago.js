@@ -48,6 +48,27 @@ class ClassPago {
     }
   }
 
+  static async obtenerTodos() {
+    try {
+      const result = await db.query(
+        `SELECT p.*, 
+        r.fecha_reserva,
+        u.nombre as nombre_usuario,
+        h.hora_inicio, h.hora_fin,
+        c.nombre as nombre_cancha
+        FROM pagos p
+        JOIN reservas r ON p.id_reserva = r.id_reserva
+        JOIN usuarios u ON r.id_usuario = u.id_usuario
+        JOIN horarios_disponibles h ON r.id_horario = h.id_horario
+        JOIN canchas c ON h.id_cancha = c.id_cancha
+        ORDER BY p.fecha_pago DESC`
+      );
+      return result.rows;
+    } catch (error) {
+      throw new Error(`Error al obtener todos los pagos: ${error.message}`);
+    }
+  }
+
   static async obtenerPorReserva(id_reserva) {
     try {
       const result = await db.query(

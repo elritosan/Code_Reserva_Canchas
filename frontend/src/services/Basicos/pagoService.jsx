@@ -4,6 +4,15 @@ import axios from 'axios';
 const API_URL = "http://localhost:5000/api/pagos";
 
 export const pagoService = {
+  obtenerTodos: async () => {
+    try {
+      const res = await axios.get(`${API_URL}`);
+      return res.data.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || "Error al obtener pagos");
+    }
+  },
+  
   obtenerPorReserva: async (id_reserva) => {
     try {
       const res = await axios.get(`${API_URL}/reserva/${id_reserva}`);

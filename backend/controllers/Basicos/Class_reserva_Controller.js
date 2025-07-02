@@ -25,6 +25,23 @@ exports.crearReserva = async (req, res) => {
   }
 };
 
+exports.obtenerTodasReservas = async (req, res) => {
+  try {
+    const reservas = await ClassReserva.obtenerTodos();
+    res.json({
+      success: true,
+      count: reservas.length,
+      data: reservas
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener reservas",
+      detalles: error.message
+    });
+  }
+};
+
 exports.obtenerReservasPorUsuario = async (req, res) => {
   try {
     const reservas = await ClassReserva.obtenerPorUsuario(req.params.id_usuario);

@@ -25,6 +25,23 @@ exports.crearPago = async (req, res) => {
   }
 };
 
+exports.obtenerTodosPagos = async (req, res) => {
+  try {
+    const pagos = await ClassPago.obtenerTodos();
+    res.json({
+      success: true,
+      count: pagos.length,
+      data: pagos
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al obtener pagos",
+      detalles: error.message
+    });
+  }
+};
+
 exports.obtenerPagosPorReserva = async (req, res) => {
   try {
     const pagos = await ClassPago.obtenerPorReserva(req.params.id_reserva);
