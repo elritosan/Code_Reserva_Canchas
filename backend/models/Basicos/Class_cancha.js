@@ -52,7 +52,7 @@ class ClassCancha {
   static async obtenerTodas() {
     try {
       const result = await db.query(
-        "SELECT * FROM canchas WHERE activa = true ORDER BY nombre"
+        "SELECT * FROM canchas ORDER BY nombre"
       );
       return result.rows;
     } catch (error) {

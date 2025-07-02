@@ -1,25 +1,31 @@
-// frontend/src/components/admin/DeportesCRUD.jsx
+// frontend\src\components\admin\DeportesCRUD.jsx
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form } from 'react-bootstrap';
+import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import { deporteService } from '../../services/Basicos/deporteService';
 
 const DeportesCRUD = () => {
   const [deportes, setDeportes] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [currentDeporte, setCurrentDeporte] = useState({ nombre: '', descripcion: '', imagen_url: '' });
+  const [currentDeporte, setCurrentDeporte] = useState({ 
+    nombre: '', 
+    descripcion: '', 
+    imagen_url: '' 
+  });
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadDeportes();
-  }, []);
-
-  const loadDeportes = async () => {
-    try {
-      const data = await deporteService.obtenerTodos();
-      setDeportes(data);
-    } catch (error) {
-      console.error('Error al cargar deportes:', error);
-    }
-  };
+    const loadData = async () => {
+      try {
+        const data = await deporteService.obtenerTodos();
+        setDeportes(data);
+        setError(null);
+      } catch (err) {
+        setError('Error al cargar deportes: ' + err.message);
+      }
+    };
+    loadData();
+  }, [refreshKey]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,9 +36,9 @@ const DeportesCRUD = () => {
         await deporteService.crear(currentDeporte);
       }
       setShowModal(false);
-      loadDeportes();
-    } catch (error) {
-      console.error('Error al guardar deporte:', error);
+      setRefreshKey(prev => prev + 1);
+    } catch (err) {
+      setError('Error al guardar deporte: ' + err.message);
     }
   };
 
@@ -40,15 +46,17 @@ const DeportesCRUD = () => {
     if (window.confirm('¿Está seguro de eliminar este deporte?')) {
       try {
         await deporteService.eliminar(id);
-        loadDeportes();
-      } catch (error) {
-        console.error('Error al eliminar deporte:', error);
+        setRefreshKey(prev => prev + 1);
+      } catch (err) {
+        setError('Error al eliminar deporte: ' + err.message);
       }
     }
   };
 
   return (
     <div>
+      {error && <Alert variant="danger" onClose={() => setError(null)} dismissible>{error}</Alert>}
+      
       <div className="d-flex justify-content-between mb-3">
         <h4>Listado de Deportes</h4>
         <Button variant="primary" onClick={() => {
@@ -59,7 +67,7 @@ const DeportesCRUD = () => {
         </Button>
       </div>
 
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead className="table-dark">
           <tr>
             <th>ID</th>
@@ -75,13 +83,15 @@ const DeportesCRUD = () => {
               <td>{deporte.nombre}</td>
               <td>{deporte.descripcion}</td>
               <td>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => {
-                  setCurrentDeporte(deporte);
-                  setShowModal(true);
-                }}>
+                <Button variant="warning" size="sm" className="me-2" 
+                  onClick={() => {
+                    setCurrentDeporte(deporte);
+                    setShowModal(true);
+                  }}>
                   <i className="fas fa-edit"></i>
                 </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(deporte.id_deporte)}>
+                <Button variant="danger" size="sm" 
+                  onClick={() => handleDelete(deporte.id_deporte)}>
                   <i className="fas fa-trash"></i>
                 </Button>
               </td>
@@ -97,7 +107,7 @@ const DeportesCRUD = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Nombre</Form.Label>
+              <Form.Label>Nombre *</Form.Label>
               <Form.Control
                 type="text"
                 value={currentDeporte.nombre}
@@ -120,11 +130,17 @@ const DeportesCRUD = () => {
                 type="text"
                 value={currentDeporte.imagen_url}
                 onChange={(e) => setCurrentDeporte({...currentDeporte, imagen_url: e.target.value})}
+                placeholder="https://ejemplo.com/imagen.jpg"
               />
             </Form.Group>
-            <Button variant="primary" type="submit">
-              Guardar
-            </Button>
+            <div className="d-flex justify-content-end">
+              <Button variant="secondary" className="me-2" onClick={() => setShowModal(false)}>
+                Cancelar
+              </Button>
+              <Button variant="primary" type="submit">
+                Guardar
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>

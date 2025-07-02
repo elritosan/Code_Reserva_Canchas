@@ -1,6 +1,6 @@
-// frontend/src/components/admin/HorariosCRUD.jsx
+// frontend\src\components\admin\HorariosCRUD.jsx
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form } from 'react-bootstrap';
+import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import { horarioDisponibleService } from '../../services/Basicos/horarioDisponibleService';
 import { canchaService } from '../../services/Basicos/canchaService';
 
@@ -16,29 +16,31 @@ const HorariosCRUD = () => {
     disponible: true 
   });
   const [filtroCancha, setFiltroCancha] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadHorarios();
-    loadCanchas();
-  }, []);
-
-  const loadHorarios = async () => {
-    try {
-      const data = await horarioDisponibleService.obtenerTodos();
-      setHorarios(data);
-    } catch (error) {
-      console.error('Error al cargar horarios:', error);
-    }
-  };
-
-  const loadCanchas = async () => {
-    try {
-      const data = await canchaService.obtenerTodas();
-      setCanchas(data);
-    } catch (error) {
-      console.error('Error al cargar canchas:', error);
-    }
-  };
+    const loadData = async () => {
+      try {
+        const [horariosData, canchasData] = await Promise.all([
+          horarioDisponibleService.obtenerTodos(),
+          canchaService.obtenerTodas()
+        ]);
+        
+        setHorarios(horariosData);
+        setCanchas(canchasData);
+        setError(null);
+        
+        // Establecer la primera cancha como valor por defecto si no hay una seleccionada
+        if (canchasData.length > 0 && !currentHorario.id_cancha) {
+          setCurrentHorario(prev => ({...prev, id_cancha: canchasData[0].id_cancha}));
+        }
+      } catch (err) {
+        setError('Error al cargar datos: ' + err.message);
+      }
+    };
+    loadData();
+  }, [refreshKey, currentHorario]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,9 +51,9 @@ const HorariosCRUD = () => {
         await horarioDisponibleService.crear(currentHorario);
       }
       setShowModal(false);
-      loadHorarios();
-    } catch (error) {
-      console.error('Error al guardar horario:', error);
+      setRefreshKey(prev => prev + 1);
+    } catch (err) {
+      setError('Error al guardar horario: ' + err.message);
     }
   };
 
@@ -59,22 +61,22 @@ const HorariosCRUD = () => {
     if (window.confirm('¿Está seguro de eliminar este horario?')) {
       try {
         await horarioDisponibleService.eliminar(id);
-        loadHorarios();
-      } catch (error) {
-        console.error('Error al eliminar horario:', error);
+        setRefreshKey(prev => prev + 1);
+      } catch (err) {
+        setError('Error al eliminar horario: ' + err.message);
       }
     }
   };
 
-  const getCanchaNombre = (id) => {
-    const cancha = canchas.find(c => c.id_cancha === id);
-    return cancha ? cancha.nombre : 'Desconocido';
-  };
-
-  const getDiaSemana = (dia) => {
-    const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-    return dias[dia - 1] || 'Desconocido';
-  };
+  const diasSemana = [
+    { id: 1, nombre: 'Lunes' },
+    { id: 2, nombre: 'Martes' },
+    { id: 3, nombre: 'Miércoles' },
+    { id: 4, nombre: 'Jueves' },
+    { id: 5, nombre: 'Viernes' },
+    { id: 6, nombre: 'Sábado' },
+    { id: 7, nombre: 'Domingo' }
+  ];
 
   const filteredHorarios = filtroCancha 
     ? horarios.filter(h => h.id_cancha === parseInt(filtroCancha))
@@ -82,6 +84,8 @@ const HorariosCRUD = () => {
 
   return (
     <div>
+      {error && <Alert variant="danger" onClose={() => setError(null)} dismissible>{error}</Alert>}
+      
       <div className="d-flex justify-content-between mb-3">
         <h4>Horarios Disponibles</h4>
         <div>
@@ -112,7 +116,7 @@ const HorariosCRUD = () => {
         </div>
       </div>
 
-      <Table striped bordered hover>
+      <Table striped bordered hover responsive>
         <thead className="table-dark">
           <tr>
             <th>ID</th>
@@ -125,27 +129,38 @@ const HorariosCRUD = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredHorarios.map((horario) => (
-            <tr key={horario.id_horario}>
-              <td>{horario.id_horario}</td>
-              <td>{getCanchaNombre(horario.id_cancha)}</td>
-              <td>{getDiaSemana(horario.dia_semana)}</td>
-              <td>{horario.hora_inicio}</td>
-              <td>{horario.hora_fin}</td>
-              <td>{horario.disponible ? 'Sí' : 'No'}</td>
-              <td>
-                <Button variant="warning" size="sm" className="me-2" onClick={() => {
-                  setCurrentHorario(horario);
-                  setShowModal(true);
-                }}>
-                  <i className="fas fa-edit"></i>
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(horario.id_horario)}>
-                  <i className="fas fa-trash"></i>
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {filteredHorarios.map((horario) => {
+            const cancha = canchas.find(c => c.id_cancha === horario.id_cancha);
+            const dia = diasSemana.find(d => d.id === horario.dia_semana);
+            
+            return (
+              <tr key={horario.id_horario}>
+                <td>{horario.id_horario}</td>
+                <td>{cancha?.nombre || 'Desconocido'}</td>
+                <td>{dia?.nombre || 'Desconocido'}</td>
+                <td>{horario.hora_inicio}</td>
+                <td>{horario.hora_fin}</td>
+                <td>
+                  <span className={`badge ${horario.disponible ? 'bg-success' : 'bg-secondary'}`}>
+                    {horario.disponible ? 'Sí' : 'No'}
+                  </span>
+                </td>
+                <td>
+                  <Button variant="warning" size="sm" className="me-2" 
+                    onClick={() => {
+                      setCurrentHorario(horario);
+                      setShowModal(true);
+                    }}>
+                    <i className="fas fa-edit"></i>
+                  </Button>
+                  <Button variant="danger" size="sm" 
+                    onClick={() => handleDelete(horario.id_horario)}>
+                    <i className="fas fa-trash"></i>
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </Table>
 
@@ -156,7 +171,7 @@ const HorariosCRUD = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Cancha</Form.Label>
+              <Form.Label>Cancha *</Form.Label>
               <Form.Select
                 value={currentHorario.id_cancha}
                 onChange={(e) => setCurrentHorario({...currentHorario, id_cancha: parseInt(e.target.value)})}
@@ -169,49 +184,64 @@ const HorariosCRUD = () => {
                 ))}
               </Form.Select>
             </Form.Group>
+            
             <Form.Group className="mb-3">
-              <Form.Label>Día de la Semana</Form.Label>
+              <Form.Label>Día de la Semana *</Form.Label>
               <Form.Select
                 value={currentHorario.dia_semana}
                 onChange={(e) => setCurrentHorario({...currentHorario, dia_semana: parseInt(e.target.value)})}
                 required
               >
-                <option value={1}>Lunes</option>
-                <option value={2}>Martes</option>
-                <option value={3}>Miércoles</option>
-                <option value={4}>Jueves</option>
-                <option value={5}>Viernes</option>
-                <option value={6}>Sábado</option>
-                <option value={7}>Domingo</option>
+                {diasSemana.map(dia => (
+                  <option key={dia.id} value={dia.id}>
+                    {dia.nombre}
+                  </option>
+                ))}
               </Form.Select>
             </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Hora Inicio</Form.Label>
-              <Form.Control
-                type="time"
-                value={currentHorario.hora_inicio}
-                onChange={(e) => setCurrentHorario({...currentHorario, hora_inicio: e.target.value})}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Hora Fin</Form.Label>
-              <Form.Control
-                type="time"
-                value={currentHorario.hora_fin}
-                onChange={(e) => setCurrentHorario({...currentHorario, hora_fin: e.target.value})}
-                required
-              />
-            </Form.Group>
+            
+            <div className="row">
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Hora Inicio *</Form.Label>
+                  <Form.Control
+                    type="time"
+                    value={currentHorario.hora_inicio}
+                    onChange={(e) => setCurrentHorario({...currentHorario, hora_inicio: e.target.value})}
+                    required
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group className="mb-3">
+                  <Form.Label>Hora Fin *</Form.Label>
+                  <Form.Control
+                    type="time"
+                    value={currentHorario.hora_fin}
+                    onChange={(e) => setCurrentHorario({...currentHorario, hora_fin: e.target.value})}
+                    required
+                  />
+                </Form.Group>
+              </div>
+            </div>
+            
             <Form.Check
               type="switch"
-              label="Disponible"
+              id="disponible-switch"
+              label="Horario disponible"
               checked={currentHorario.disponible}
               onChange={(e) => setCurrentHorario({...currentHorario, disponible: e.target.checked})}
+              className="mb-3"
             />
-            <Button variant="primary" type="submit" className="mt-3">
-              Guardar
-            </Button>
+            
+            <div className="d-flex justify-content-end">
+              <Button variant="secondary" className="me-2" onClick={() => setShowModal(false)}>
+                Cancelar
+              </Button>
+              <Button variant="primary" type="submit">
+                Guardar
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>
