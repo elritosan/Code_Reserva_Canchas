@@ -93,6 +93,64 @@ class ClassPago {
     }
   }
 
+  static async actualizar(id_pago, { id_reserva, monto, metodo_pago, estado, transaccion_id }) {
+    try {
+      const fields = [];
+      const values = [];
+      let paramIndex = 1;
+
+      if (id_reserva !== undefined) {
+        fields.push(`id_reserva = $${paramIndex++}`);
+        values.push(id_reserva);
+      }
+      if (monto !== undefined) {
+        fields.push(`monto = $${paramIndex++}`);
+        values.push(monto);
+      }
+      if (metodo_pago !== undefined) {
+        fields.push(`metodo_pago = $${paramIndex++}`);
+        values.push(metodo_pago);
+      }
+      if (estado !== undefined) {
+        fields.push(`estado = $${paramIndex++}`);
+        values.push(estado);
+        // Actualizar fecha_pago si el estado cambia a completado
+        if (estado === 'completado') {
+          fields.push(`fecha_pago = NOW()`);
+        }
+      }
+      if (transaccion_id !== undefined) {
+        fields.push(`transaccion_id = $${paramIndex++}`);
+        values.push(transaccion_id);
+      }
+
+      if (fields.length === 0) {
+        throw new Error('No hay campos para actualizar');
+      }
+
+      values.push(id_pago);
+      const query = `UPDATE pagos SET ${fields.join(', ')} 
+                    WHERE id_pago = $${paramIndex} RETURNING *`;
+
+      const result = await db.query(query, values);
+      if (!result.rows[0]) {
+        throw new Error('Pago no encontrado');
+      }
+
+      // Si el pago se completa, actualizar estado de la reserva
+      if (estado === 'completado') {
+        await ClassReserva.actualizarEstado(
+          result.rows[0].id_reserva, 
+          'confirmada'
+        );
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error al actualizar pago: ${error.message}`);
+    }
+  }
+
   static async actualizarEstado(id_pago, { estado, transaccion_id = null }) {
     try {
       const estadosPermitidos = ['pendiente', 'completado', 'rechazado', 'reembolsado'];
@@ -138,6 +196,25 @@ class ClassPago {
       return result.rows;
     } catch (error) {
       throw new Error(`Error al obtener pagos del usuario: ${error.message}`);
+    }
+  }
+
+  static async eliminar(id_pago) {
+    try {
+      // Verificar si el pago existe
+      const pago = await this.obtenerPorId(id_pago);
+      if (!pago) {
+        throw new Error('Pago no encontrado');
+      }
+
+      const result = await db.query(
+        "DELETE FROM pagos WHERE id_pago = $1 RETURNING *",
+        [id_pago]
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error al eliminar pago: ${error.message}`);
     }
   }
 }

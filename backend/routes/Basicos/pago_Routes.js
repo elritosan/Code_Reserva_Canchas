@@ -7,6 +7,8 @@ const {
   obtenerPago,
   actualizarEstadoPago,
   obtenerTodosPagos,
+  actualizarPago,
+  eliminarPago,
 } = require("../../controllers/Basicos/Class_pago_Controller");
 
 const router = express.Router();
@@ -16,6 +18,8 @@ router.get("/", obtenerTodosPagos);
 router.get("/reserva/:id_reserva", obtenerPagosPorReserva);
 router.get("/usuario/:id_usuario", obtenerPagosPorUsuario);
 router.get("/:id_pago", obtenerPago);
+router.put("/:id_pago", actualizarPago);
 router.put("/:id_pago/estado", actualizarEstadoPago);
+router.delete("/:id_pago", eliminarPago);
 
 module.exports = router;

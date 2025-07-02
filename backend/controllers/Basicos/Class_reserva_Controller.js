@@ -78,6 +78,27 @@ exports.obtenerReserva = async (req, res) => {
   }
 };
 
+exports.actualizarReserva = async (req, res) => {
+  try {
+    const reservaActualizada = await ClassReserva.actualizar(
+      req.params.id_reserva,
+      req.body
+    );
+    res.json({
+      success: true,
+      mensaje: "Reserva actualizada correctamente",
+      data: reservaActualizada
+    });
+  } catch (error) {
+    const statusCode = error.message.includes('ya existe') ? 409 : 500;
+    res.status(statusCode).json({
+      success: false,
+      error: "Error al actualizar reserva",
+      detalles: error.message
+    });
+  }
+};
+
 exports.actualizarEstadoReserva = async (req, res) => {
   try {
     const { estado } = req.body;

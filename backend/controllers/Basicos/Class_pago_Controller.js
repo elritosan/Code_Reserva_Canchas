@@ -95,6 +95,26 @@ exports.obtenerPago = async (req, res) => {
   }
 };
 
+exports.actualizarPago = async (req, res) => {
+  try {
+    const pagoActualizado = await ClassPago.actualizar(
+      req.params.id_pago,
+      req.body
+    );
+    res.json({
+      success: true,
+      mensaje: "Pago actualizado correctamente",
+      data: pagoActualizado
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al actualizar pago",
+      detalles: error.message
+    });
+  }
+};
+
 exports.actualizarEstadoPago = async (req, res) => {
   try {
     const { estado, transaccion_id } = req.body;
@@ -111,6 +131,23 @@ exports.actualizarEstadoPago = async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Error al actualizar pago",
+      detalles: error.message
+    });
+  }
+};
+
+exports.eliminarPago = async (req, res) => {
+  try {
+    const pagoEliminado = await ClassPago.eliminar(req.params.id_pago);
+    res.json({
+      success: true,
+      mensaje: "Pago eliminado exitosamente",
+      data: pagoEliminado
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Error al eliminar pago",
       detalles: error.message
     });
   }

@@ -7,6 +7,7 @@ const {
   actualizarDisponibilidad,
   eliminarHorario,
   obtenerTodosHorarios,
+  actualizarHorario,
 } = require("../../controllers/Basicos/Class_horario_disponible_Controller");
 
 const router = express.Router();
@@ -15,6 +16,7 @@ router.post("/", crearHorario);
 router.get("/", obtenerTodosHorarios);
 router.get("/cancha/:id_cancha", obtenerHorariosPorCancha);
 router.get("/:id_horario", obtenerHorario);
+router.put("/:id_horario", actualizarHorario);
 router.put("/:id_horario/disponibilidad", actualizarDisponibilidad);
 router.delete("/:id_horario", eliminarHorario);
 

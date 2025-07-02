@@ -35,7 +35,7 @@ CREATE TABLE deportes (
 CREATE TABLE canchas (
     id_cancha SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
-    id_deporte INT REFERENCES deportes(id_deporte),
+    id_deporte INT REFERENCES deportes(id_deporte) ON DELETE CASCADE,
     descripcion TEXT,
     precio_hora DECIMAL(8,2) NOT NULL,
     imagen_url VARCHAR(255),
@@ -44,7 +44,7 @@ CREATE TABLE canchas (
 
 CREATE TABLE horarios_disponibles (
     id_horario SERIAL PRIMARY KEY,
-    id_cancha INT REFERENCES canchas(id_cancha),
+    id_cancha INT REFERENCES canchas(id_cancha) ON DELETE CASCADE,
     dia_semana INT NOT NULL CHECK (dia_semana BETWEEN 1 AND 7), -- 1=Lunes, 7=Domingo
     hora_inicio TIME NOT NULL,
     hora_fin TIME NOT NULL,
@@ -54,8 +54,8 @@ CREATE TABLE horarios_disponibles (
 
 CREATE TABLE reservas (
     id_reserva SERIAL PRIMARY KEY,
-    id_usuario INT REFERENCES usuarios(id_usuario),
-    id_horario INT REFERENCES horarios_disponibles(id_horario),
+    id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_horario INT REFERENCES horarios_disponibles(id_horario) ON DELETE CASCADE,
     fecha_reserva DATE NOT NULL,
     estado VARCHAR(20) DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'confirmada', 'cancelada', 'completada')),
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -64,7 +64,7 @@ CREATE TABLE reservas (
 
 CREATE TABLE pagos (
     id_pago SERIAL PRIMARY KEY,
-    id_reserva INT REFERENCES reservas(id_reserva),
+    id_reserva INT REFERENCES reservas(id_reserva) ON DELETE CASCADE,
     monto DECIMAL(8,2) NOT NULL,
     metodo_pago VARCHAR(20) CHECK (metodo_pago IN ('tarjeta', 'transferencia', 'efectivo')),
     estado VARCHAR(20) DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'completado', 'rechazado', 'reembolsado')),

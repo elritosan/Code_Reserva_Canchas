@@ -101,6 +101,54 @@ class ClassHorarioDisponible {
     }
   }
 
+  static async actualizar(id_horario, { id_cancha, dia_semana, hora_inicio, hora_fin, disponible }) {
+    try {
+      const fields = [];
+      const values = [];
+      let paramIndex = 1;
+
+      if (id_cancha !== undefined) {
+        fields.push(`id_cancha = $${paramIndex++}`);
+        values.push(id_cancha);
+      }
+      if (dia_semana !== undefined) {
+        fields.push(`dia_semana = $${paramIndex++}`);
+        values.push(dia_semana);
+      }
+      if (hora_inicio !== undefined) {
+        fields.push(`hora_inicio = $${paramIndex++}`);
+        values.push(hora_inicio);
+      }
+      if (hora_fin !== undefined) {
+        fields.push(`hora_fin = $${paramIndex++}`);
+        values.push(hora_fin);
+      }
+      if (disponible !== undefined) {
+        fields.push(`disponible = $${paramIndex++}`);
+        values.push(disponible);
+      }
+
+      if (fields.length === 0) {
+        throw new Error('No hay campos para actualizar');
+      }
+
+      values.push(id_horario);
+      const query = `UPDATE horarios_disponibles SET ${fields.join(', ')} 
+                    WHERE id_horario = $${paramIndex} RETURNING *`;
+
+      const result = await db.query(query, values);
+      if (!result.rows[0]) {
+        throw new Error('Horario no encontrado');
+      }
+      return result.rows[0];
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new Error('Ya existe un horario con estos datos para esta cancha');
+      }
+      throw new Error(`Error al actualizar horario: ${error.message}`);
+    }
+  }
+
   static async actualizarDisponibilidad(id_horario, disponible) {
     try {
       const result = await db.query(

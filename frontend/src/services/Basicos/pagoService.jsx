@@ -51,6 +51,15 @@ export const pagoService = {
     }
   },
 
+  actualizar: async (id_pago, datos) => {
+    try {
+      const res = await axios.put(`${API_URL}/${id_pago}`, datos);
+      return res.data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   actualizarEstado: async (id_pago, { estado, transaccion_id }) => {
     try {
       const res = await axios.put(`${API_URL}/${id_pago}/estado`, { 
@@ -59,6 +68,15 @@ export const pagoService = {
       return res.data.data;
     } catch (error) {
       throw error;
+    }
+  },
+
+  eliminar: async (id_pago) => {
+    try {
+      const res = await axios.delete(`${API_URL}/${id_pago}`);
+      return res.data.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.error || "Error al eliminar pago");
     }
   },
 };

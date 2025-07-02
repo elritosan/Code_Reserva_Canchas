@@ -42,6 +42,15 @@ export const reservaService = {
     }
   },
 
+  actualizar: async (id_reserva, datos) => {
+    try {
+      const res = await axios.put(`${API_URL}/${id_reserva}`, datos);
+      return res.data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   actualizarEstado: async (id_reserva, estado) => {
     try {
       const res = await axios.put(`${API_URL}/${id_reserva}/estado`, { 

@@ -79,6 +79,27 @@ exports.obtenerHorario = async (req, res) => {
   }
 };
 
+exports.actualizarHorario = async (req, res) => {
+  try {
+    const horarioActualizado = await ClassHorarioDisponible.actualizar(
+      req.params.id_horario,
+      req.body
+    );
+    res.json({
+      success: true,
+      mensaje: "Horario actualizado correctamente",
+      data: horarioActualizado
+    });
+  } catch (error) {
+    const statusCode = error.message.includes('ya existe') ? 409 : 500;
+    res.status(statusCode).json({
+      success: false,
+      error: "Error al actualizar horario",
+      detalles: error.message
+    });
+  }
+};
+
 exports.actualizarDisponibilidad = async (req, res) => {
   try {
     const { disponible } = req.body;

@@ -111,6 +111,59 @@ class ClassReserva {
     }
   }
 
+  static async actualizar(id_reserva, { id_usuario, id_horario, fecha_reserva, estado }) {
+    try {
+      const fields = [];
+      const values = [];
+      let paramIndex = 1;
+
+      if (id_usuario !== undefined) {
+        fields.push(`id_usuario = $${paramIndex++}`);
+        values.push(id_usuario);
+      }
+      if (id_horario !== undefined) {
+        fields.push(`id_horario = $${paramIndex++}`);
+        values.push(id_horario);
+      }
+      if (fecha_reserva !== undefined) {
+        fields.push(`fecha_reserva = $${paramIndex++}`);
+        values.push(fecha_reserva);
+      }
+      if (estado !== undefined) {
+        fields.push(`estado = $${paramIndex++}`);
+        values.push(estado);
+      }
+
+      if (fields.length === 0) {
+        throw new Error('No hay campos para actualizar');
+      }
+
+      values.push(id_reserva);
+      const query = `UPDATE reservas SET ${fields.join(', ')} 
+                    WHERE id_reserva = $${paramIndex} RETURNING *`;
+
+      const result = await db.query(query, values);
+      if (!result.rows[0]) {
+        throw new Error('Reserva no encontrada');
+      }
+
+      // Si se cambió el estado, manejar lógica adicional
+      if (estado === 'cancelada') {
+        await ClassHorarioDisponible.actualizarDisponibilidad(
+          result.rows[0].id_horario, 
+          true
+        );
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new Error('Ya existe una reserva para este horario y fecha');
+      }
+      throw new Error(`Error al actualizar reserva: ${error.message}`);
+    }
+  }
+
   static async actualizarEstado(id_reserva, estado) {
     try {
       const estadosPermitidos = ['pendiente', 'confirmada', 'cancelada', 'completada'];

@@ -42,6 +42,15 @@ export const horarioDisponibleService = {
     }
   },
 
+  actualizar: async (id_horario, datos) => {
+    try {
+      const res = await axios.put(`${API_URL}/${id_horario}`, datos);
+      return res.data.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   actualizarDisponibilidad: async (id_horario, disponible) => {
     try {
       const res = await axios.put(`${API_URL}/${id_horario}/disponibilidad`, { 

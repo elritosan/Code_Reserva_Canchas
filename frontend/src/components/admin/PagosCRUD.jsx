@@ -147,7 +147,7 @@ const PagosCRUD = () => {
             <tr key={pago.id_pago}>
               <td>{pago.id_pago}</td>
               <td>{getReservaInfo(pago.id_reserva)}</td>
-              <td>${pago.monto.toFixed(2)}</td>
+              <td>${pago.monto}</td>
               <td>{pago.metodo_pago}</td>
               <td>{getEstadoBadge(pago.estado)}</td>
               <td>{pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleString() : 'Pendiente'}</td>
