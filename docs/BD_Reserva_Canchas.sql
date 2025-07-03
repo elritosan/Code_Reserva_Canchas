@@ -20,7 +20,7 @@ CREATE TABLE usuarios (
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     telefono VARCHAR(15),
-    id_rol INT REFERENCES roles(id_rol) DEFAULT 2, -- 2 = cliente por defecto
+    id_rol INT REFERENCES roles(id_rol) ON DELETE CASCADE DEFAULT 2, -- 2 = cliente por defecto
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     verificado BOOLEAN DEFAULT FALSE
 );

@@ -14,12 +14,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
+    const currentPath = window.location.pathname;
+    
+    if (!storedUser && currentPath !== '/signup') {
       navigate('/login');
+    } else if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
-    setIsLoading(false); // Finaliza la carga
+    setIsLoading(false);
   }, [navigate]);
 
   if (isLoading) {

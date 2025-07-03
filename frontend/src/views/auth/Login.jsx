@@ -1,4 +1,5 @@
 // frontend/src/views/auth/Login.jsx
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Form, Button, Alert, Card } from 'react-bootstrap';
@@ -64,7 +65,7 @@ const Login = () => {
           </Form>
           
           <div className="text-center mt-3">
-            <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
+            <p>¿No tienes cuenta? <Link to="/signup">Regístrate</Link></p>
           </div>
         </Card.Body>
       </Card>

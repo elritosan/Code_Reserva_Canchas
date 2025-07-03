@@ -101,10 +101,6 @@ class ClassDeporte {
         [id_deporte]
       );
 
-      if (tieneCanchas.rows[0]) {
-        throw new Error('No se puede eliminar el deporte porque tiene canchas asociadas');
-      }
-
       const result = await db.query(
         "DELETE FROM deportes WHERE id_deporte = $1 RETURNING *",
         [id_deporte]
