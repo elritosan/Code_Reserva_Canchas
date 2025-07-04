@@ -7,25 +7,21 @@ import HorariosCRUD from '../../components/admin/HorariosCRUD';
 
 const GestionarCanchas = () => {
   const [key, setKey] = useState('deportes');
+  const [refreshKey, setRefreshKey] = useState(0); // Estado compartido
 
   return (
     <div className="container-fluid mt-4">
       <h2 className="mb-4"><i className="fas fa-futbol me-2"></i>Gestión de Canchas</h2>
       
-      <Tabs
-        id="controlled-tab-example"
-        activeKey={key}
-        onSelect={(k) => setKey(k)}
-        className="mb-3"
-      >
+      <Tabs activeKey={key} onSelect={(k) => setKey(k)} className="mb-3">
         <Tab eventKey="deportes" title="Deportes">
-          <DeportesCRUD />
+          <DeportesCRUD refreshKey={refreshKey} setRefreshKey={setRefreshKey} />
         </Tab>
         <Tab eventKey="canchas" title="Canchas">
-          <CanchasCRUD />
+          <CanchasCRUD refreshKey={refreshKey} setRefreshKey={setRefreshKey} />
         </Tab>
         <Tab eventKey="horarios" title="Horarios">
-          <HorariosCRUD />
+          <HorariosCRUD refreshKey={refreshKey} setRefreshKey={setRefreshKey} />
         </Tab>
       </Tabs>
     </div>

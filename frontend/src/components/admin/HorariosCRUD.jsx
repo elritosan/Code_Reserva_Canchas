@@ -4,7 +4,7 @@ import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import { horarioDisponibleService } from '../../services/Basicos/horarioDisponibleService';
 import { canchaService } from '../../services/Basicos/canchaService';
 
-const HorariosCRUD = () => {
+const HorariosCRUD = ({ refreshKey, setRefreshKey }) => {
   const [horarios, setHorarios] = useState([]);
   const [canchas, setCanchas] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -16,7 +16,6 @@ const HorariosCRUD = () => {
     disponible: true 
   });
   const [filtroCancha, setFiltroCancha] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {

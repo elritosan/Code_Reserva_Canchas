@@ -3,7 +3,7 @@ import { Button, Table, Modal, Form, Alert, Badge } from 'react-bootstrap';
 import { pagoService } from '../../services/Basicos/pagoService';
 import { reservaService } from '../../services/Basicos/reservaService';
 
-const PagosCRUD = () => {
+const PagosCRUD = ({ refreshKey, setRefreshKey }) => {
   const [pagos, setPagos] = useState([]);
   const [reservas, setReservas] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -15,7 +15,6 @@ const PagosCRUD = () => {
     transaccion_id: '' 
   });
   const [filtroEstado, setFiltroEstado] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {

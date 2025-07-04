@@ -14,7 +14,7 @@ const pool = new Pool({
   connectionTimeoutMillis: 1000,
 });
 
-pool.on('connect', () => console.log('✅ Nueva conexión a PostgreSQL api-ratings'));
+pool.on('connect', () => console.log('✅ Nueva conexión a PostgreSQL'));
 pool.on('error', err => console.error('❌ Error en el pool de PostgreSQL:', err));
 
 module.exports = pool;

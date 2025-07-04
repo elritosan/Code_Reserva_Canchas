@@ -4,7 +4,7 @@ import { reservaService } from '../../services/Basicos/reservaService';
 import { horarioDisponibleService } from '../../services/Basicos/horarioDisponibleService';
 import { usuarioService } from '../../services/Basicos/usuarioService';
 
-const ReservasCRUD = () => {
+const ReservasCRUD = ({ refreshKey, setRefreshKey }) => {
   const [reservas, setReservas] = useState([]);
   const [horarios, setHorarios] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
@@ -17,7 +17,6 @@ const ReservasCRUD = () => {
   });
   const [filtroFecha, setFiltroFecha] = useState('');
   const [filtroEstado, setFiltroEstado] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
