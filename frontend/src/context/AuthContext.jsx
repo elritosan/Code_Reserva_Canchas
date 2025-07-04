@@ -44,8 +44,8 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     
     try {
-      // Validaciones del frontend
-      if (!userData.nombre || !userData.email || !userData.password) {
+      // Validaciones
+      if (!userData.nombre || !userData.email || !userData.password || !userData.telefono) {
         throw new Error('Todos los campos son obligatorios');
       }
 
@@ -61,18 +61,24 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Las contraseñas no coinciden');
       }
 
+      // Validar formato de teléfono (opcional)
+      if (!/^[0-9]{10,15}$/.test(userData.telefono)) {
+        throw new Error('El teléfono debe tener entre 10 y 15 dígitos');
+      }
+
       await usuarioService.crear({
         nombre: userData.nombre,
         email: userData.email,
         password: userData.password,
-        id_rol: 2 // Rol de cliente por defecto
+        telefono: userData.telefono,
+        id_rol: 1 // Rol de Administrador por defecto
       });
 
       // Autologin después del registro
       const loggedUser = await usuarioService.login(userData.email, userData.password);
       setUser(loggedUser);
       localStorage.setItem('user', JSON.stringify(loggedUser));
-      navigate('/'); // Redirigir al home después del registro
+      navigate('/');
       
       return { success: true };
     } catch (err) {

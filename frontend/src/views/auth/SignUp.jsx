@@ -9,6 +9,7 @@ const SignUp = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
+    telefono: '',
     password: '',
     confirmPassword: ''
   });
@@ -54,6 +55,19 @@ const SignUp = () => {
                 onChange={handleChange}
                 required
               />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Teléfono</Form.Label>
+              <Form.Control
+                type="tel"
+                name="telefono"
+                value={formData.telefono}
+                onChange={handleChange}
+                placeholder="Ej: 0991234567"
+                required
+              />
+              <Form.Text>Ingrese su número de teléfono</Form.Text>
             </Form.Group>
             
             <Form.Group className="mb-3">
