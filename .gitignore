@@ -8,3 +8,6 @@
 *.json
 
 .env
+.env.test
+
+docs/HTML

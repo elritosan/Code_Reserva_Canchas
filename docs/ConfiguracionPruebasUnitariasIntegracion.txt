@@ -1,0 +1,67 @@
+🔧 Configuración Completa para Pruebas Unitarias e Integración
+A continuación, se presentan los pasos necesarios para preparar un entorno completo de testing en tu proyecto. Esta configuración incluye pruebas unitarias e integración utilizando Jest, Supertest y otras herramientas clave del ecosistema Node.js.
+
+1️⃣ Instalar Dependencias Necesarias
+Abre tu terminal en el directorio del backend del proyecto y ejecuta el siguiente comando para instalar las dependencias de desarrollo requeridas:
+
+    npm install --save-dev jest supertest cross-env
+
+Estas herramientas permiten ejecutar pruebas automatizadas en diferentes entornos, realizar pruebas de endpoints HTTP, y manejar variables de entorno.
+
+2️⃣ Configurar package.json
+Edita tu archivo package.json y agrega los siguientes scripts y configuraciones:
+
+🧪 Scripts de Testing
+
+    "scripts": {
+        "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
+        "test:unit": "cross-env NODE_ENV=test jest --runInBand test/unit",
+        "test:integration": "cross-env NODE_ENV=test jest --runInBand test/integration"
+    }
+
+⚙️ Configuración de Jest
+
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "testTimeout": 10000
+  }
+  
+Esta configuración asegura que:
+
+Se ejecuten únicamente archivos de prueba que coincidan con el patrón **/*.test.js.
+Se utilice el entorno de Node.js para las pruebas.
+Se genere un reporte de cobertura.
+Se ignoren carpetas no relevantes durante la recolección de cobertura.
+
+3️⃣ Estructura de Archivos de Pruebas
+Crea una estructura de carpetas clara dentro del directorio test/ para separar las pruebas unitarias e integración:
+
+/test
+  ├── unit/
+  │   └── ejemploUnit.test.js
+  └── integration/
+      └── ejemploIntegration.test.js
+Esto mejora la organización y facilita el mantenimiento del código de pruebas.
+
+4️⃣ Archivo .env.test
+Crea un archivo .env.test en la raíz de tu proyecto para definir variables de entorno específicas para el entorno de testing:
+
+NODE_ENV=test
+PG_HOST=localhost
+PG_USER=postgres
+PG_PASSWORD=tu_contraseña
+PG_DATABASE=nombre_de_tu_base
+PG_PORT=5432
+PORT=5000
+
+🔍 Nota: Si ya estás utilizando un archivo .env, puedes duplicarlo como .env.test y adaptar los valores necesarios para pruebas.
