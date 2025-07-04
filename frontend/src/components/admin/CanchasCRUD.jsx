@@ -4,7 +4,7 @@ import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import { canchaService } from '../../services/Basicos/canchaService';
 import { deporteService } from '../../services/Basicos/deporteService';
 
-const CanchasCRUD = () => {
+const CanchasCRUD = ({ refreshKey, setRefreshKey }) => {
   const [canchas, setCanchas] = useState([]);
   const [deportes, setDeportes] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -16,7 +16,6 @@ const CanchasCRUD = () => {
     imagen_url: '', 
     activa: true 
   });
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {

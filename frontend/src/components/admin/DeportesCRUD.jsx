@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, Alert } from 'react-bootstrap';
 import { deporteService } from '../../services/Basicos/deporteService';
 
-const DeportesCRUD = () => {
+const DeportesCRUD = ({ refreshKey, setRefreshKey }) => {
   const [deportes, setDeportes] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [currentDeporte, setCurrentDeporte] = useState({ 
@@ -11,7 +11,6 @@ const DeportesCRUD = () => {
     descripcion: '', 
     imagen_url: '' 
   });
-  const [refreshKey, setRefreshKey] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
