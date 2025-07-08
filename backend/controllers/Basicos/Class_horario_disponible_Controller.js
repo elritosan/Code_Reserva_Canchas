@@ -4,6 +4,29 @@ const ClassHorarioDisponible = require("../../models/Basicos/Class_horario_dispo
 exports.crearHorario = async (req, res) => {
   try {
     const { id_cancha, dia_semana, hora_inicio, hora_fin } = req.body;
+
+    // Validaciones manuales
+    if (!id_cancha) {
+      return res.status(400).json({
+        success: false,
+        error: "ID de cancha es requerido"
+      });
+    }
+
+    if (!dia_semana || dia_semana < 1 || dia_semana > 7) {
+      return res.status(400).json({
+        success: false,
+        error: "Día de semana debe ser entre 1 (Lunes) y 7 (Domingo)"
+      });
+    }
+
+    if (!hora_inicio || !hora_fin) {
+      return res.status(400).json({
+        success: false,
+        error: "Hora inicio y fin son requeridas"
+      });
+    }
+
     const nuevoHorario = await ClassHorarioDisponible.crear({ 
       id_cancha, 
       dia_semana, 
@@ -17,7 +40,7 @@ exports.crearHorario = async (req, res) => {
       data: nuevoHorario
     });
   } catch (error) {
-    const statusCode = error.message.includes('ya existe') ? 409 : 500;
+    const statusCode = error.message.includes('se solapa') ? 409 : 500;
     res.status(statusCode).json({
       success: false,
       error: "Error al crear horario",

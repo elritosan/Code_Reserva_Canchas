@@ -4,6 +4,15 @@ const ClassDeporte = require("../../models/Basicos/Class_deporte");
 exports.crearDeporte = async (req, res) => {
   try {
     const { nombre, descripcion, imagen_url } = req.body;
+
+    // Validación manual
+    if (!nombre || nombre.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        error: "El nombre del deporte es requerido"
+      });
+    }
+
     const nuevoDeporte = await ClassDeporte.crear({ nombre, descripcion, imagen_url });
     
     res.status(201).json({
@@ -63,6 +72,14 @@ exports.actualizarDeporte = async (req, res) => {
       req.params.id_deporte,
       req.body
     );
+    
+    if (!deporteActualizado) {
+      return res.status(404).json({
+        success: false,
+        error: "Deporte no encontrado"
+      });
+    }
+    
     res.json({
       success: true,
       mensaje: "Deporte actualizado exitosamente",
@@ -81,13 +98,22 @@ exports.actualizarDeporte = async (req, res) => {
 exports.eliminarDeporte = async (req, res) => {
   try {
     const deporteEliminado = await ClassDeporte.eliminar(req.params.id_deporte);
+    
+    if (!deporteEliminado) {
+      return res.status(404).json({
+        success: false,
+        error: "Deporte no encontrado"
+      });
+    }
+    
     res.json({
       success: true,
       mensaje: "Deporte eliminado exitosamente",
       data: deporteEliminado
     });
   } catch (error) {
-    res.status(500).json({
+    const statusCode = error.message.includes('tiene canchas asociadas') ? 400 : 500;
+    res.status(statusCode).json({
       success: false,
       error: "Error al eliminar deporte",
       detalles: error.message

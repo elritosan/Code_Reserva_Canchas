@@ -4,6 +4,15 @@ const ClassReserva = require("../../models/Basicos/Class_reserva");
 exports.crearReserva = async (req, res) => {
   try {
     const { id_usuario, id_horario, fecha_reserva } = req.body;
+
+    // Validación manual
+    if (!id_usuario || !id_horario || !fecha_reserva) {
+      return res.status(400).json({
+        success: false,
+        error: "Datos incompletos: usuario, horario y fecha son requeridos"
+      });
+    }
+
     const nuevaReserva = await ClassReserva.crear({ 
       id_usuario, 
       id_horario, 
@@ -16,7 +25,7 @@ exports.crearReserva = async (req, res) => {
       data: nuevaReserva
     });
   } catch (error) {
-    const statusCode = error.message.includes('ya existe') ? 409 : 500;
+    const statusCode = error.message.includes('no está disponible') ? 400 : 500;
     res.status(statusCode).json({
       success: false,
       error: "Error al crear reserva",
@@ -122,7 +131,24 @@ exports.actualizarEstadoReserva = async (req, res) => {
 
 exports.eliminarReserva = async (req, res) => {
   try {
+    const reserva = await ClassReserva.obtenerPorId(req.params.id_reserva);
+    
+    if (!reserva) {
+      return res.status(404).json({
+        success: false,
+        error: "Reserva no encontrada"
+      });
+    }
+
+    if (reserva.estado === 'confirmada') {
+      return res.status(400).json({
+        success: false,
+        error: "No se puede eliminar una reserva confirmada"
+      });
+    }
+
     const reservaEliminada = await ClassReserva.eliminar(req.params.id_reserva);
+    
     res.json({
       success: true,
       mensaje: "Reserva eliminada exitosamente",

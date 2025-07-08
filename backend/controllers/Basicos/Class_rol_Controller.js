@@ -4,6 +4,15 @@ const ClassRol = require("../../models/Basicos/Class_rol");
 exports.crearRol = async (req, res) => {
   try {
     const { nombre, descripcion } = req.body;
+    
+    // Validación manual
+    if (!nombre || nombre.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        error: "El nombre del rol es requerido"
+      });
+    }
+
     const nuevoRol = await ClassRol.crear({ nombre, descripcion });
     
     res.status(201).json({

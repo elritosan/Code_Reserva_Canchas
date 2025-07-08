@@ -4,7 +4,29 @@ const ClassUsuario = require("../../models/Basicos/Class_usuario");
 exports.crearUsuario = async (req, res) => {
   try {
     const { nombre, email, password, telefono, id_rol } = req.body;
-    const nuevoUsuario = await ClassUsuario.crear({ nombre, email, password, telefono, id_rol });
+
+    // Validaciones manuales
+    if (!nombre || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: "Nombre, email y contraseña son requeridos"
+      });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        error: "La contraseña debe tener al menos 8 caracteres"
+      });
+    }
+
+    const nuevoUsuario = await ClassUsuario.crear({ 
+      nombre, 
+      email, 
+      password, 
+      telefono, 
+      id_rol 
+    });
     
     res.status(201).json({
       success: true,

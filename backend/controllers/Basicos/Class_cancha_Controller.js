@@ -4,6 +4,29 @@ const ClassCancha = require("../../models/Basicos/Class_cancha");
 exports.crearCancha = async (req, res) => {
   try {
     const { nombre, id_deporte, descripcion, precio_hora, imagen_url } = req.body;
+
+    // Validaciones manuales
+    if (!nombre || nombre.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        error: "El nombre de la cancha es requerido"
+      });
+    }
+
+    if (!id_deporte) {
+      return res.status(400).json({
+        success: false,
+        error: "El deporte es requerido"
+      });
+    }
+
+    if (!precio_hora || isNaN(precio_hora) || precio_hora <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: "El precio por hora debe ser un número positivo"
+      });
+    }
+
     const nuevaCancha = await ClassCancha.crear({ 
       nombre, 
       id_deporte, 

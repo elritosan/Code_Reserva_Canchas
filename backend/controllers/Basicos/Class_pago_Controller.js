@@ -4,6 +4,30 @@ const ClassPago = require("../../models/Basicos/Class_pago");
 exports.crearPago = async (req, res) => {
   try {
     const { id_reserva, monto, metodo_pago, transaccion_id } = req.body;
+
+    // Validaciones manuales
+    if (!id_reserva || !monto || !metodo_pago) {
+      return res.status(400).json({
+        success: false,
+        error: "Datos incompletos: reserva, monto y método son requeridos"
+      });
+    }
+
+    if (isNaN(monto) || monto <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: "El monto debe ser un número positivo"
+      });
+    }
+
+    const metodosPermitidos = ['tarjeta', 'transferencia', 'efectivo'];
+    if (!metodosPermitidos.includes(metodo_pago)) {
+      return res.status(400).json({
+        success: false,
+        error: "Método de pago no válido"
+      });
+    }
+
     const nuevoPago = await ClassPago.crear({ 
       id_reserva, 
       monto, 
@@ -118,10 +142,21 @@ exports.actualizarPago = async (req, res) => {
 exports.actualizarEstadoPago = async (req, res) => {
   try {
     const { estado, transaccion_id } = req.body;
+    
+    // Validación de estado
+    const estadosPermitidos = ['pendiente', 'completado', 'rechazado', 'reembolsado'];
+    if (!estadosPermitidos.includes(estado)) {
+      return res.status(400).json({
+        success: false,
+        error: "Estado no válido"
+      });
+    }
+
     const pagoActualizado = await ClassPago.actualizarEstado(
       req.params.id_pago,
       { estado, transaccion_id }
     );
+    
     res.json({
       success: true,
       mensaje: "Estado de pago actualizado",
