@@ -197,10 +197,15 @@ class ClassReserva {
 
   static async eliminar(id_reserva) {
     try {
-      // Obtener reserva para liberar horario
+      // Obtener reserva para verificar estado y liberar horario
       const reserva = await this.obtenerPorId(id_reserva);
       if (!reserva) {
         throw new Error('Reserva no encontrada');
+      }
+
+      // No permitir eliminar reservas confirmadas
+      if (reserva.estado === 'confirmada') {
+        throw new Error('No se puede eliminar una reserva confirmada');
       }
 
       const result = await db.query(

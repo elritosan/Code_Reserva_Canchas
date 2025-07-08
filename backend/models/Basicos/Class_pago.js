@@ -151,30 +151,37 @@ class ClassPago {
     }
   }
 
-  static async actualizarEstado(id_pago, { estado, transaccion_id = null }) {
+  static async actualizarEstado(idPago, { estado, transaccion_id = null }) {
     try {
-      const estadosPermitidos = ['pendiente', 'completado', 'rechazado', 'reembolsado'];
-      if (!estadosPermitidos.includes(estado)) {
+      // Validar que el estado sea uno de los permitidos
+      const estadosValidos = ['pendiente', 'completado', 'rechazado', 'reembolsado'];
+      if (!estadosValidos.includes(estado)) {
         throw new Error('Estado no válido');
       }
 
-      const result = await db.query(
-        `UPDATE pagos SET estado = $1, fecha_pago = CASE WHEN $1 = 'completado' THEN NOW() ELSE fecha_pago END, 
-         transaccion_id = COALESCE($2, transaccion_id)
-         WHERE id_pago = $3 RETURNING *`,
-        [estado, transaccion_id, id_pago]
-      );
-
-      if (!result.rows[0]) {
-        throw new Error('Pago no encontrado');
+      // Convertir idPago a número entero explícitamente
+      const idPagoInt = parseInt(idPago, 10);
+      if (isNaN(idPagoInt)) {
+        throw new Error('ID de pago debe ser un número');
       }
 
-      // Si el pago se completa, actualizar estado de la reserva
-      if (estado === 'completado') {
-        await ClassReserva.actualizarEstado(
-          result.rows[0].id_reserva, 
-          'confirmada'
-        );
+      const query = `
+        UPDATE pagos 
+        SET estado = $1,
+            transaccion_id = COALESCE($2, transaccion_id),
+            fecha_pago = CASE WHEN $1 = 'completado' THEN NOW() ELSE fecha_pago END
+        WHERE id_pago = $3
+        RETURNING *;
+      `;
+
+      const result = await db.query(query, [
+        estado,          // $1 - VARCHAR(20)
+        transaccion_id,  // $2 - VARCHAR(100) o NULL
+        idPagoInt       // $3 - INTEGER (SERIAL)
+      ]);
+
+      if (result.rows.length === 0) {
+        throw new Error('Pago no encontrado');
       }
 
       return result.rows[0];

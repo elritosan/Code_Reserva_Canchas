@@ -60,6 +60,15 @@ class ClassDeporte {
       let paramIndex = 1;
 
       if (nombre !== undefined) {
+        // Verificar si el nuevo nombre ya existe (excluyendo el registro actual)
+        const existe = await db.query(
+          "SELECT 1 FROM deportes WHERE nombre = $1 AND id_deporte != $2 LIMIT 1",
+          [nombre, id_deporte]
+        );
+        if (existe.rows[0]) {
+          throw new Error('Ya existe un deporte con ese nombre');
+        }
+        
         fields.push(`nombre = $${paramIndex++}`);
         values.push(nombre.trim());
       }
