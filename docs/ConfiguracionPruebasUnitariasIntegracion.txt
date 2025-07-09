@@ -16,7 +16,8 @@ Edita tu archivo package.json y agrega los siguientes scripts y configuraciones:
     "scripts": {
         "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
         "test:unit": "cross-env NODE_ENV=test jest --runInBand test/unit",
-        "test:integration": "cross-env NODE_ENV=test jest --runInBand test/integration"
+        "test:integration": "cross-env NODE_ENV=test jest --runInBand test/integration",
+        "test:performance": "jest test/performance/reservaConcurrente.test.js"
     }
 
 ⚙️ Configuración de Jest

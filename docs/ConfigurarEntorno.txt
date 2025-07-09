@@ -6,6 +6,9 @@
     npm install express cors
     npm install pg dotenv
     npm install bcryptjs
+    npm install uuid perf_hooks --save-dev
+    npm install pg-format --save-dev
+    npm install worker_threads
 
 📌 Crear archivo .env
 Dentro de la carpeta Backend, crea un archivo llamado ".env" y coloca lo siguiente (ajustado a tu configuración local):
