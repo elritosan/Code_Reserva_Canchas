@@ -1,6 +1,6 @@
 // frontend/src/views/auth/SignUp.jsx
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Form, Button, Alert, Card } from 'react-bootstrap';
 
@@ -13,6 +13,23 @@ const SignUp = () => {
     password: '',
     confirmPassword: ''
   });
+  const [passwordError, setPasswordError] = useState('');
+
+  useEffect(() => {
+    if (formData.password) {
+      if (formData.password.length < 8) {
+        setPasswordError('Mínimo 8 caracteres');
+      } else if (!/[A-Z]/.test(formData.password)) {
+        setPasswordError('Agrega una mayúscula');
+      } else if (!/\d/.test(formData.password)) {
+        setPasswordError('Agrega un número');
+      } else if (!/[@$!%*?&]/.test(formData.password)) {
+        setPasswordError('Agrega un carácter especial (@$!%*?&)');
+      } else {
+        setPasswordError('');
+      }
+    }
+  }, [formData.password]);
 
   const handleChange = (e) => {
     setFormData({
@@ -78,8 +95,14 @@ const SignUp = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                isInvalid={!!passwordError && formData.password.length > 0}
               />
-              <Form.Text>Mínimo 8 caracteres</Form.Text>
+              <Form.Text>
+                Requisitos: 8+ caracteres, 1 mayúscula, 1 número, 1 especial (@$!%*?&)
+              </Form.Text>
+              <Form.Control.Feedback type="invalid">
+                {passwordError}
+              </Form.Control.Feedback>
             </Form.Group>
             
             <Form.Group className="mb-4">

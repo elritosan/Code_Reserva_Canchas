@@ -35,7 +35,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const validatePassword = (password) => {
-    return password.length >= 8;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
   };
 
   // Registrar nuevo usuario
@@ -54,7 +55,9 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (!validatePassword(userData.password)) {
-        throw new Error('La contraseña debe tener al menos 8 caracteres');
+        throw new Error(
+          'La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial (@$!%*?&)'
+        );
       }
 
       if (userData.password !== userData.confirmPassword) {
